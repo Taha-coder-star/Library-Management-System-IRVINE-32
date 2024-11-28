@@ -60,13 +60,13 @@ AUTHOR4       BYTE AUTHOR_SIZE DUP (?)
 AUTHOR5       BYTE AUTHOR_SIZE DUP (?)
 
 
-; Array of pointers to member and book buffers
+
 MEMBERS       DWORD OFFSET MEMBER1, OFFSET MEMBER2, OFFSET MEMBER3, OFFSET MEMBER4, OFFSET MEMBER5
 BOOKS         DWORD OFFSET BOOK1, OFFSET BOOK2, OFFSET BOOK3, OFFSET BOOK4, OFFSET BOOK5
 AUTHORS       DWORD OFFSET AUTHOR1, OFFSET AUTHOR2, OFFSET AUTHOR3, OFFSET AUTHOR4, OFFSET AUTHOR5
 
-NUM_MEMBERS   DWORD 0               ; Counter for the number of registered members
-NUM_BOOKS     DWORD 0               ; Counter for the number of registered books
+NUM_MEMBERS   DWORD 0              
+NUM_BOOKS     DWORD 0              
 msg3 BYTE 0AH
      
       BYTE "OUR MOST POPULAR BOOKS", 0dh, 0ah
@@ -82,10 +82,10 @@ books8  BYTE "8. 'The Hobbit' by J.R.R. Tolkien", 0dh, 0ah
 books9  BYTE "9. 'Fahrenheit 451' by Ray Bradbury", 0dh, 0ah
 books10 BYTE "10. 'The Alchemist' by Paulo Coelho", 0dh, 0ah
 books11 BYTE "11. 'The Diary of a Young Girl' by Anne Frank", 0dh, 0ah
-books12 BYTE "12. 'The Little Prince' by Antoine de Saint-Exupéry", 0dh, 0ah
+books12 BYTE "12. 'The Little Prince' by Antoine de Saint-Exupï¿½ry", 0dh, 0ah
 books13 BYTE "13. 'Moby-Dick' by Herman Melville", 0dh, 0ah
-books14 BYTE "14. 'Jane Eyre' by Charlotte Brontë", 0dh, 0ah
-books15 BYTE "15. 'Wuthering Heights' by Emily Brontë", 0dh, 0ah
+books14 BYTE "14. 'Jane Eyre' by Charlotte Brontï¿½", 0dh, 0ah
+books15 BYTE "15. 'Wuthering Heights' by Emily Brontï¿½", 0dh, 0ah
 books16 BYTE "16. 'Animal Farm' by George Orwell", 0dh, 0ah
 books17 BYTE "17. 'Brave New World' by Aldous Huxley", 0dh, 0ah
 books18 BYTE "18. 'The Adventures of Huckleberry Finn' by Mark Twain", 0dh, 0ah
@@ -94,60 +94,61 @@ books20 BYTE "20. 'Crime and Punishment' by Fyodor Dostoevsky", 0
 .CODE
 
 main PROC
-    repeat_menu:          ; Label to restart the menu
+    repeat_menu:          
 
-    call Menu             ; Display the menu
+    call Menu             
 
-    call ReadInt          ; Read user choice
+    call ReadInt          
     cmp eax, 1
-    je call_RegisterMember ; Option 1: Register a Member
+    je call_RegisterMember
     cmp eax, 2
-    je call_ViewMembers    ; Option 2: View Members
+    je call_ViewMembers   
     cmp eax, 3
-    je call_AddBooks       ; Option 3: Add Books
+    je call_AddBooks       
+    
     cmp eax, 4
-    je call_SearchBooks    ; Option 4: Search Books
+    je call_SearchBooks
     cmp eax, 5
-    je call_ViewBooks      ; Option 5: View Books
+    je call_ViewBooks  
     cmp eax, 6
-    je call_ExitProgram    ; Option 6: Exit Program
+    je call_ExitProgram  
 
-    jmp repeat_menu        ; If invalid input, repeat the menu
+    jmp repeat_menu      
 
 call_RegisterMember:
-    call RegisterMember    ; Call the function
-    jmp repeat_menu        ; Return to menu
+    call RegisterMember  
+    jmp repeat_menu      
 
 call_ViewMembers:
-    call ViewMembers       ; Call the function
-    jmp repeat_menu        ; Return to menu
+    call ViewMembers     
+        jmp repeat_menu        
 
 call_AddBooks:
-    call AddBooks          ; Call the function
-    jmp repeat_menu        ; Return to menu
+    call AddBooks          
+    jmp repeat_menu        
 
 call_SearchBooks:
-    call SearchBooks       ; Call the function
-    jmp repeat_menu        ; Return to menu
+    call SearchBooks       
+    jmp repeat_menu        
 
 call_ViewBooks:
-    call ViewBooks         ; Call the function
-    jmp repeat_menu        ; Return to menu
+    call ViewBooks         
+    jmp repeat_menu        
 
 call_ExitProgram:
-    call ExitProgram       ; Exit the program
+    call ExitProgram       
 
 main ENDP
 
 
 Menu PROC
-    lea edx, msg1           ; Load the menu message
-    call WriteString        ; Print the menu
+    lea edx, msg1         
+    call WriteString      
     ret
 Menu ENDP
 
 
-; The RegisterMember and AddBooks procedures are already implemented and remain the same.
+
 RegisterMember PROC
     call ClrScr             
     lea edx, msg2           
@@ -189,36 +190,36 @@ RegisterMember PROC
 RegisterMember ENDP
 
 ViewMembers PROC
-    call ClrScr             ; Clear the screen
+    call ClrScr            
 
-    mov eax, [NUM_MEMBERS]  ; Load the number of registered members
-    cmp eax, 0              ; Check if there are any members
-    je no_members           ; If none, jump to no members message
+    mov eax, [NUM_MEMBERS] 
+    cmp eax, 0             
+    je no_members          
 
     ; Display list of members
     lea edx, members_list_msg
-    call WriteString        ; "List of Registered Members:"
+    call WriteString       
 
-    mov ebx, OFFSET MEMBERS ; Load the address of the MEMBERS array
-    mov ecx, [NUM_MEMBERS]  ; Load the count of registered members
-    xor esi, esi            ; Initialize index to 0
+    mov ebx, OFFSET MEMBERS
+    mov ecx, [NUM_MEMBERS] 
+    xor esi, esi           
 
 print_members_loop:
-    mov edi, [ebx + esi * 4] ; Get the address of the current member buffer
-    lea edx, [edi]           ; Load member name
-    call WriteString         ; Print member name
-    call CrLf                ; Print newline
-    inc esi                  ; Increment to the next member
-    loop print_members_loop  ; Repeat for all members
+    mov edi, [ebx + esi * 4] 
+    lea edx, [edi]           
+    call WriteString         
+    call CrLf                
+    inc esi                  
+    loop print_members_loop  
 
     jmp end_proc
 
 no_members:
     lea edx, no_members_msg
-    call WriteString         ; Display "No members registered yet."
+    call WriteString        
 
 end_proc:
-    call CrLf                ; Newline for clarity
+    call CrLf               
     ret
 ViewMembers ENDP
 
@@ -279,58 +280,57 @@ AddBooks PROC
 AddBooks ENDP
 
 SearchBooks PROC
-    call ClrScr              ; Clear the screen
-    lea edx, search_prompt   ; Prompt the user to enter a book title
+    call ClrScr              
+    lea edx, search_prompt   
     call WriteString
 
-    lea edx, book_buffer_mem ; Buffer for user input
-    mov ecx, 50              ; Max length of input
-    call ReadString          ; Read the book title to search for
+    lea edx, book_buffer_mem 
+    mov ecx, 50              
+    call ReadString           
 
-    mov eax, [NUM_BOOKS]     ; Load the number of registered books
-    cmp eax, 0               ; Check if there are any books registered
-    je no_books              ; If none, jump to no_books
+    mov eax, [NUM_BOOKS]     
+    cmp eax, 0               
+    je no_books              
 
-    mov ebx, OFFSET BOOKS    ; Address of the BOOKS array
-    mov ecx, eax             ; Set loop counter to the number of books
-    xor esi, esi             ; Initialize index to 0
+    mov ebx, OFFSET BOOKS    
+    mov ecx, eax             
+    xor esi, esi             
 
 search_loop:
-    mov edi, [ebx + esi * 4] ; Get the address of the current book title
-    lea edx, [edi]           ; Load the stored book title
-    lea esi, book_buffer_mem ; Load the input book title for comparison
-    call StrCmp              ; Compare strings
-    test eax, eax            ; Check if strings match (EAX=0)
-    je book_found            ; Jump if a match is found
+    mov edi, [ebx + esi * 4] 
+    lea edx, [edi]           
+    lea esi, book_buffer_mem 
+    call StrCmp              
+    test eax, eax            
+    je book_found            
 
-    inc esi                  ; Increment index for next book
-    loop search_loop         ; Repeat for all books
+    inc esi                  
+    loop search_loop         
 
-    jmp no_match             ; If no match is found after loop
-
+    jmp no_match            
 book_found:
     lea edx, book_found_msg
-    call WriteString         ; Display "Book found: "
-    lea edx, book_buffer_mem ; Display the book title
+    call WriteString        
+    lea edx, book_buffer_mem 
     call WriteString
 
    ; lea edx, book_author_msg
-  ;  call WriteString         ; Display "Author: "
+  ;  call WriteString       
     ;mov edi, [OFFSET AUTHORS + esi * 4] ; Get the author's name
     ;lea edx, [edi]
-    ;call WriteString         ; Print the author's name
+    ;call WriteString       
     ;call CrLf
-    jmp end_search           ; Exit after displaying book info
+    jmp end_search          
 
 no_match:
     lea edx, book_not_found_msg
-    call WriteString         ; Display "No book with the given title exists."
+    call WriteString        
     call CrLf
-    jmp end_search           ; Exit gracefully
+    jmp end_search          
 
 no_books:
     lea edx, no_books_msg
-    call WriteString         ; Display "No books registered yet."
+    call WriteString         
     call CrLf
 
 end_search:
@@ -341,69 +341,69 @@ ViewBooks PROC
     mov edx, offset msg3
     call writestring
 
-    mov eax, [NUM_BOOKS]     ; Load the number of registered books
-    cmp eax, 0               ; Check if any books are registered
-    je no_books              ; If none, jump to no_books
+    mov eax, [NUM_BOOKS]     
+    cmp eax, 0               
+    je no_books              
 
     lea edx, books_list_msg
-    call WriteString         ; Display "List of Registered Books:"
+    call WriteString         
 
-    mov ebx, OFFSET BOOKS    ; Address of the BOOKS array
-    mov esi, OFFSET AUTHORS  ; Address of the AUTHORS array
-    mov ecx, [NUM_BOOKS]     ; Set loop counter to the number of books
-    xor edi, edi             ; Initialize index to 0
+    mov ebx, OFFSET BOOKS    
+    mov esi, OFFSET AUTHORS  
+    mov ecx, [NUM_BOOKS]     
+    xor edi, edi             
 
 view_books_loop:
-    mov eax, [ebx + edi * 4] ; Get address of the current book title
-    lea edx, [eax]           ; Load the book title
-    call WriteString         ; Print book title
+    mov eax, [ebx + edi * 4] 
+    lea edx, [eax]           
+    call WriteString         
     call crlf
-    lea edx, book_author_msg ; Display "Author: "
+    lea edx, book_author_msg 
     call WriteString
-    mov eax, [esi + edi * 4] ; Get address of the corresponding author name
+    mov eax, [esi + edi * 4] 
     lea edx, [eax]
-    call WriteString         ; Print author name
+    call WriteString        
 
-    call CrLf                ; Print a newline
-    inc edi                  ; Increment to the next book
-    loop view_books_loop     ; Repeat for all books
+    call CrLf                
+    inc edi                  
+    loop view_books_loop     
 
-    jmp end_view_books       ; Jump to end of procedure
+    jmp end_view_books       
 
 no_books:
     lea edx, no_books_msg
-    call WriteString         ; Display "No books registered yet."
+    call WriteString         
 
 end_view_books:
-    call CrLf                ; Add a newline for clarity
+    call CrLf             
     ret
 ViewBooks ENDP
 
 
 StrCmp PROC
-    push esi            ; Save registers
+    push esi            
     push edi
 
 compare_loop:
-    mov al, [esi]       ; Load byte from first string
-    mov bl, [edi]       ; Load byte from second string
-    cmp al, bl          ; Compare the bytes
-    jne strings_not_equal ; If they are not equal, exit with ZF=0
-    test al, al         ; Check if end of string (null terminator)
-    je strings_equal    ; If both are null, strings are equal
-    inc esi             ; Move to the next character
+    mov al, [esi]       
+    mov bl, [edi]       
+    cmp al, bl          
+    jne strings_not_equal 
+    test al, al         
+    je strings_equal    
+    inc esi             
     inc edi
-    jmp compare_loop    ; Repeat comparison
+    jmp compare_loop    
 
 strings_equal:
-    xor eax, eax        ; Set return value to 0 (equal)
+    xor eax, eax        
     jmp exit_compare
 
 strings_not_equal:
-    mov eax, 1          ; Set return value to 1 (not equal)
+    mov eax, 1          
 
 exit_compare:
-    pop edi             ; Restore registers
+    pop edi             
     pop esi
     ret
 StrCmp ENDP
