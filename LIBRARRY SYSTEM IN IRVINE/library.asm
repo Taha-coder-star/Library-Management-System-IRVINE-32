@@ -96,16 +96,16 @@ books20 BYTE "20. 'Crime and Punishment' by Fyodor Dostoevsky", 0
 main PROC
     repeat_menu:          
 
-    call Menu             
+    call Menu            
 
     call ReadInt          
     cmp eax, 1
     je call_RegisterMember
     cmp eax, 2
-    je call_ViewMembers   
+    je call_ViewMembers  
     cmp eax, 3
-    je call_AddBooks       
-    
+    je call_AddBooks      
+   
     cmp eax, 4
     je call_SearchBooks
     cmp eax, 5
@@ -120,7 +120,7 @@ call_RegisterMember:
     jmp repeat_menu      
 
 call_ViewMembers:
-    call ViewMembers     
+    call ViewMembers    
         jmp repeat_menu        
 
 call_AddBooks:
@@ -128,21 +128,21 @@ call_AddBooks:
     jmp repeat_menu        
 
 call_SearchBooks:
-    call SearchBooks       
+    call SearchBooks      
     jmp repeat_menu        
 
 call_ViewBooks:
-    call ViewBooks         
+    call ViewBooks        
     jmp repeat_menu        
 
 call_ExitProgram:
-    call ExitProgram       
+    call ExitProgram      
 
 main ENDP
 
 
 Menu PROC
-    lea edx, msg1         
+    lea edx, msg1        
     call WriteString      
     ret
 Menu ENDP
@@ -150,31 +150,31 @@ Menu ENDP
 
 
 RegisterMember PROC
-    call ClrScr             
-    lea edx, msg2           
+    call ClrScr            
+    lea edx, msg2          
     call WriteString        
 
-    lea edx, buffer_mem     
-    mov ecx, 50             
-    call ReadString         
+    lea edx, buffer_mem    
+    mov ecx, 50            
+    call ReadString        
 
     mov eax, [NUM_MEMBERS]  
     cmp eax, 5              
     jae member_limit_reached
 
-    
+   
     mov edi, [MEMBERS + eax * 4]
-    lea esi, buffer_mem     
-    mov ecx, MEMBER_SIZE   
-    cld                     
-    rep movsb               
+    lea esi, buffer_mem    
+    mov ecx, MEMBER_SIZE  
+    cld                    
+    rep movsb              
 
-    inc DWORD PTR [NUM_MEMBERS] 
+    inc DWORD PTR [NUM_MEMBERS]
 
    
     lea edx, member_registered_msg
     call WriteString
-    lea edx, buffer_mem     
+    lea edx, buffer_mem    
     call WriteString
     call CrLf
 
@@ -192,22 +192,22 @@ RegisterMember ENDP
 ViewMembers PROC
     call ClrScr            
 
-    mov eax, [NUM_MEMBERS] 
-    cmp eax, 0             
+    mov eax, [NUM_MEMBERS]
+    cmp eax, 0            
     je no_members          
 
     ; Display list of members
     lea edx, members_list_msg
-    call WriteString       
+    call WriteString      
 
     mov ebx, OFFSET MEMBERS
-    mov ecx, [NUM_MEMBERS] 
-    xor esi, esi           
+    mov ecx, [NUM_MEMBERS]
+    xor esi, esi          
 
 print_members_loop:
-    mov edi, [ebx + esi * 4] 
-    lea edx, [edi]           
-    call WriteString         
+    mov edi, [ebx + esi * 4]
+    lea edx, [edi]          
+    call WriteString        
     call CrLf                
     inc esi                  
     loop print_members_loop  
@@ -219,7 +219,7 @@ no_members:
     call WriteString        
 
 end_proc:
-    call CrLf               
+    call CrLf              
     ret
 ViewMembers ENDP
 
@@ -227,41 +227,41 @@ ViewMembers ENDP
 
 
 AddBooks PROC
-    call ClrScr             
+    call ClrScr            
     lea edx, book_title_prompt
     call WriteString        
 
     lea edx, book_buffer_mem
-    mov ecx, 50             
-    call ReadString         
+    mov ecx, 50            
+    call ReadString        
 
     lea edx, book_author_prompt
     call WriteString        
 
     lea edx, author_buffer_mem
-    mov ecx, 50             
-    call ReadString         
+    mov ecx, 50            
+    call ReadString        
 
     mov eax, [NUM_BOOKS]    
     cmp eax, 5              
     jae book_limit_reached
 
-    
+   
     mov edi, [BOOKS + eax * 4]
     lea esi, book_buffer_mem
     mov ecx, BOOK_SIZE      
-    cld                     
-    rep movsb               
+    cld                    
+    rep movsb              
 
     mov edi, [AUTHORS + eax * 4]
     lea esi, author_buffer_mem
     mov ecx, AUTHOR_SIZE    
-    cld                     
-    rep movsb               
+    cld                    
+    rep movsb              
 
     inc DWORD PTR [NUM_BOOKS]
 
-    
+   
     lea edx, book_registered_msg
     call WriteString
     lea edx, book_buffer_mem
@@ -281,44 +281,44 @@ AddBooks ENDP
 
 SearchBooks PROC
     call ClrScr              
-    lea edx, search_prompt   
+    lea edx, search_prompt  
     call WriteString
 
-    lea edx, book_buffer_mem 
+    lea edx, book_buffer_mem
     mov ecx, 50              
-    call ReadString           
+    call ReadString          
 
-    mov eax, [NUM_BOOKS]     
-    cmp eax, 0               
+    mov eax, [NUM_BOOKS]    
+    cmp eax, 0              
     je no_books              
 
     mov ebx, OFFSET BOOKS    
-    mov ecx, eax             
-    xor esi, esi             
+    mov ecx, eax            
+    xor esi, esi            
 
 search_loop:
-    mov edi, [ebx + esi * 4] 
-    lea edx, [edi]           
-    lea esi, book_buffer_mem 
+    mov edi, [ebx + esi * 4]
+    lea edx, [edi]          
+    lea esi, book_buffer_mem
     call StrCmp              
     test eax, eax            
     je book_found            
 
     inc esi                  
-    loop search_loop         
+    loop search_loop        
 
     jmp no_match            
 book_found:
     lea edx, book_found_msg
     call WriteString        
-    lea edx, book_buffer_mem 
+    lea edx, book_buffer_mem
     call WriteString
 
    ; lea edx, book_author_msg
-  ;  call WriteString       
+  ;  call WriteString      
     ;mov edi, [OFFSET AUTHORS + esi * 4] ; Get the author's name
     ;lea edx, [edi]
-    ;call WriteString       
+    ;call WriteString      
     ;call CrLf
     jmp end_search          
 
@@ -330,52 +330,52 @@ no_match:
 
 no_books:
     lea edx, no_books_msg
-    call WriteString         
+    call WriteString        
     call CrLf
 
 end_search:
     ret
 SearchBooks ENDP
 ViewBooks PROC
-    call ClrScr 
+    call ClrScr
     mov edx, offset msg3
     call writestring
 
-    mov eax, [NUM_BOOKS]     
-    cmp eax, 0               
+    mov eax, [NUM_BOOKS]    
+    cmp eax, 0              
     je no_books              
 
     lea edx, books_list_msg
-    call WriteString         
+    call WriteString        
 
     mov ebx, OFFSET BOOKS    
     mov esi, OFFSET AUTHORS  
-    mov ecx, [NUM_BOOKS]     
-    xor edi, edi             
+    mov ecx, [NUM_BOOKS]    
+    xor edi, edi            
 
 view_books_loop:
-    mov eax, [ebx + edi * 4] 
-    lea edx, [eax]           
-    call WriteString         
+    mov eax, [ebx + edi * 4]
+    lea edx, [eax]          
+    call WriteString        
     call crlf
-    lea edx, book_author_msg 
+    lea edx, book_author_msg
     call WriteString
-    mov eax, [esi + edi * 4] 
+    mov eax, [esi + edi * 4]
     lea edx, [eax]
     call WriteString        
 
     call CrLf                
     inc edi                  
-    loop view_books_loop     
+    loop view_books_loop    
 
-    jmp end_view_books       
+    jmp end_view_books      
 
 no_books:
     lea edx, no_books_msg
-    call WriteString         
+    call WriteString        
 
 end_view_books:
-    call CrLf             
+    call CrLf            
     ret
 ViewBooks ENDP
 
@@ -385,13 +385,13 @@ StrCmp PROC
     push edi
 
 compare_loop:
-    mov al, [esi]       
-    mov bl, [edi]       
+    mov al, [esi]      
+    mov bl, [edi]      
     cmp al, bl          
-    jne strings_not_equal 
-    test al, al         
+    jne strings_not_equal
+    test al, al        
     je strings_equal    
-    inc esi             
+    inc esi            
     inc edi
     jmp compare_loop    
 
@@ -403,7 +403,7 @@ strings_not_equal:
     mov eax, 1          
 
 exit_compare:
-    pop edi             
+    pop edi            
     pop esi
     ret
 StrCmp ENDP
@@ -411,8 +411,8 @@ StrCmp ENDP
 
 
 ExitProgram PROC
-    call ClrScr             
-    lea edx, msg1           
+    call ClrScr            
+    lea edx, msg1          
     call WriteString        
     mov eax, 0
     call ExitProcess        
